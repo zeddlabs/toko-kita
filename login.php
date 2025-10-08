@@ -21,8 +21,16 @@ if (isset($_POST['masuk'])) {
     if (password_verify($password, $row['password'])) {
       $_SESSION['login'] = true;
       $_SESSION['user_id'] = $row['id'];
+      $_SESSION['nama'] = $row['nama'];
+      $_SESSION['role'] = $row['role'];
+      $_SESSION['foto'] = $row['foto'];
 
-      header('Location: index.php');
+      if ($row['role'] == 'admin') {
+        header('Location: admin/index.php');
+      } else {
+        header('Location: index.php');
+      }
+
       exit;
     }
   }
