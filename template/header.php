@@ -86,6 +86,9 @@ $url = explode("/", $_SERVER['REQUEST_URI']);
             <li class="<?= ($url[1] == 'kategori') ? 'active' : '' ?>"><a class="nav-link" href="/kategori/index.php"><i
                   class="fa fa-align-left"></i>
                 <span>Data Kategori</span></a></li>
+            <li class="<?= ($url[1] == 'produk') ? 'active' : '' ?>"><a class="nav-link" href="/produk/index.php"><i
+                  class="fa fa-align-left"></i>
+                <span>Data Produk</span></a></li>
           </ul>
 
           <div class="mt-4 mb-4 p-3 hide-sidebar-mini">
