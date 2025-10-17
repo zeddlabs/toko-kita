@@ -87,8 +87,11 @@ $url = explode("/", $_SERVER['REQUEST_URI']);
                   class="fa fa-align-left"></i>
                 <span>Data Kategori</span></a></li>
             <li class="<?= ($url[1] == 'produk') ? 'active' : '' ?>"><a class="nav-link" href="/produk/index.php"><i
-                  class="fa fa-align-left"></i>
+                  class="fa fa-inbox"></i>
                 <span>Data Produk</span></a></li>
+            <li class="<?= ($url[1] == 'pelanggan') ? 'active' : '' ?>"><a class="nav-link"
+                href="/pelanggan/index.php"><i class="fa fa-users"></i></i>
+                <span>Data Pelanggan</span></a></li>
           </ul>
 
           <div class="mt-4 mb-4 p-3 hide-sidebar-mini">
