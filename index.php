@@ -1,6 +1,14 @@
 <?php
 session_start();
 
+require 'config/koneksi.php';
+
+$query = "SELECT produk.*, kategori.nama AS nama_kategori FROM produk INNER JOIN kategori ON produk.kategori_id = kategori.id ORDER BY produk.id DESC";
+$result = mysqli_query($conn, $query);
+
+$query_promo = "SELECT produk.*, kategori.nama AS nama_kategori FROM produk INNER JOIN kategori ON produk.kategori_id = kategori.id WHERE produk.harga_diskon > 0 ORDER BY produk.id DESC";
+$result_promo = mysqli_query($conn, $query_promo);
+
 ?>
 
 <!DOCTYPE html>
@@ -93,93 +101,35 @@ session_start();
       </p>
 
       <div class="promo-content">
-        <div class="product-card">
-          <img src="assets/images/promo_1.png" alt="" class="product-image" />
-          <div class="product-title">
-            <div class="product-name">
-              <p>Shiny Dress</p>
-              <p>Al Karam</p>
+        <?php while ($row = mysqli_fetch_assoc($result_promo)): ?>
+          <div class="product-card">
+            <img src="uploads/<?= $row['gambar']; ?>" alt="" class="product-image" />
+            <div class="product-title">
+              <div class="product-name">
+                <p><?= $row['nama']; ?></p>
+                <p><?= $row['merk']; ?></p>
+              </div>
+              <div class="product-rating">
+                <?php for ($i = 0; $i < $row['rating']; $i++): ?>
+                  <i class="ph-fill ph-star"></i>
+                <?php endfor; ?>
+              </div>
             </div>
-            <div class="product-rating">
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
+            <p class="product-description">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Consequuntur commodi architecto a neque saepe dolor accusamus
+              suscipit reprehenderit culpa dolorum odit eaque, animi repudiandae
+              laboriosam atque asperiores? Unde, omnis debitis!
+            </p>
+            <div class="product-price">
+              <p class="product-discount-price"><?= 'Rp' . number_format($row['harga_diskon'], 0, ',', '.'); ?></p>
+              <p class="product-normal-price"><?= 'Rp' . number_format($row['harga_normal'], 0, ',', '.'); ?></p>
             </div>
+            <a href="#" class="product-add-to-cart">
+              <i class="ph ph-shopping-cart"></i> Tambah Keranjang
+            </a>
           </div>
-          <p class="product-description">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            Consequuntur commodi architecto a neque saepe dolor accusamus
-            suscipit reprehenderit culpa dolorum odit eaque, animi repudiandae
-            laboriosam atque asperiores? Unde, omnis debitis!
-          </p>
-          <div class="product-price">
-            <p class="product-discount-price">Rp200.000</p>
-            <p class="product-normal-price">Rp400.000</p>
-          </div>
-          <a href="#" class="product-add-to-cart">
-            <i class="ph ph-shopping-cart"></i> Tambah Keranjang
-          </a>
-        </div>
-        <div class="product-card">
-          <img src="assets/images/promo_2.png" alt="" class="product-image" />
-          <div class="product-title">
-            <div class="product-name">
-              <p>Long Dress</p>
-              <p>Al Karam</p>
-            </div>
-            <div class="product-rating">
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-            </div>
-          </div>
-          <p class="product-description">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            Consequuntur commodi architecto a neque saepe dolor accusamus
-            suscipit reprehenderit culpa dolorum odit eaque, animi repudiandae
-            laboriosam atque asperiores? Unde, omnis debitis!
-          </p>
-          <div class="product-price">
-            <p class="product-discount-price">Rp200.000</p>
-            <p class="product-normal-price">Rp400.000</p>
-          </div>
-          <a href="#" class="product-add-to-cart">
-            <i class="ph ph-shopping-cart"></i> Tambah Keranjang
-          </a>
-        </div>
-        <div class="product-card">
-          <img src="assets/images/promo_3.png" alt="" class="product-image" />
-          <div class="product-title">
-            <div class="product-name">
-              <p>Full Sweater</p>
-              <p>Al Karam</p>
-            </div>
-            <div class="product-rating">
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-            </div>
-          </div>
-          <p class="product-description">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            Consequuntur commodi architecto a neque saepe dolor accusamus
-            suscipit reprehenderit culpa dolorum odit eaque, animi repudiandae
-            laboriosam atque asperiores? Unde, omnis debitis!
-          </p>
-          <div class="product-price">
-            <p class="product-discount-price">Rp200.000</p>
-            <p class="product-normal-price">Rp400.000</p>
-          </div>
-          <a href="#" class="product-add-to-cart">
-            <i class="ph ph-shopping-cart"></i> Tambah Keranjang
-          </a>
-        </div>
+        <?php endwhile; ?>
       </div>
     </section>
 
@@ -193,183 +143,42 @@ session_start();
       </p>
 
       <div class="products-content">
-        <div class="product-card">
-          <img src="assets/images/promo_1.png" alt="" class="product-image" />
-          <div class="product-title">
-            <div class="product-name">
-              <p>Shiny Dress</p>
-              <p>Al Karam</p>
+        <?php while ($row = mysqli_fetch_assoc($result)): ?>
+          <div class="product-card">
+            <img src="uploads/<?= $row['gambar']; ?>" alt="" class="product-image" />
+            <div class="product-title">
+              <div class="product-name">
+                <p><?= $row['nama']; ?></p>
+                <p><?= $row['merk']; ?></p>
+              </div>
+              <div class="product-rating">
+                <?php for ($i = 0; $i < $row['rating']; $i++): ?>
+                  <i class="ph-fill ph-star"></i>
+                <?php endfor; ?>
+              </div>
             </div>
-            <div class="product-rating">
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
+            <p class="product-description">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Consequuntur commodi architecto a neque saepe dolor accusamus
+              suscipit reprehenderit culpa dolorum odit eaque, animi repudiandae
+              laboriosam atque asperiores? Unde, omnis debitis!
+            </p>
+            <div class="product-price">
+              <?php if ($row['harga_diskon'] > 0): ?>
+                <p class="product-discount-price">
+                  <?= 'Rp' . number_format($row['harga_diskon'], 0, ',', '.'); ?>
+                </p>
+                <p class="product-normal-price"><?= 'Rp' . number_format($row['harga_normal'], 0, ',', '.'); ?></p></a>
+              <?php else: ?>
+                <p class="product-discount-price"><?= 'Rp' . number_format($row['harga_normal'], 0, ',', '.'); ?></p>
+              <?php endif; ?>
             </div>
+            <a href="#" class="product-add-to-cart">
+              <i class="ph ph-shopping-cart"></i> Tambah Keranjang
+            </a>
           </div>
-          <p class="product-description">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            Consequuntur commodi architecto a neque saepe dolor accusamus
-            suscipit reprehenderit culpa dolorum odit eaque, animi repudiandae
-            laboriosam atque asperiores? Unde, omnis debitis!
-          </p>
-          <div class="product-price">
-            <p class="product-discount-price">Rp200.000</p>
-            <p class="product-normal-price">Rp400.000</p>
-          </div>
-          <a href="#" class="product-add-to-cart">
-            <i class="ph ph-shopping-cart"></i> Tambah Keranjang
-          </a>
-        </div>
-        <div class="product-card">
-          <img src="assets/images/promo_2.png" alt="" class="product-image" />
-          <div class="product-title">
-            <div class="product-name">
-              <p>Long Dress</p>
-              <p>Al Karam</p>
-            </div>
-            <div class="product-rating">
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-            </div>
-          </div>
-          <p class="product-description">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            Consequuntur commodi architecto a neque saepe dolor accusamus
-            suscipit reprehenderit culpa dolorum odit eaque, animi repudiandae
-            laboriosam atque asperiores? Unde, omnis debitis!
-          </p>
-          <div class="product-price">
-            <p class="product-discount-price">Rp200.000</p>
-            <p class="product-normal-price">Rp400.000</p>
-          </div>
-          <a href="#" class="product-add-to-cart">
-            <i class="ph ph-shopping-cart"></i> Tambah Keranjang
-          </a>
-        </div>
-        <div class="product-card">
-          <img src="assets/images/promo_3.png" alt="" class="product-image" />
-          <div class="product-title">
-            <div class="product-name">
-              <p>Full Sweater</p>
-              <p>Al Karam</p>
-            </div>
-            <div class="product-rating">
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-            </div>
-          </div>
-          <p class="product-description">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            Consequuntur commodi architecto a neque saepe dolor accusamus
-            suscipit reprehenderit culpa dolorum odit eaque, animi repudiandae
-            laboriosam atque asperiores? Unde, omnis debitis!
-          </p>
-          <div class="product-price">
-            <p class="product-discount-price">Rp200.000</p>
-            <p class="product-normal-price">Rp400.000</p>
-          </div>
-          <a href="#" class="product-add-to-cart">
-            <i class="ph ph-shopping-cart"></i> Tambah Keranjang
-          </a>
-        </div>
-        <div class="product-card">
-          <img src="assets/images/promo_1.png" alt="" class="product-image" />
-          <div class="product-title">
-            <div class="product-name">
-              <p>Shiny Dress</p>
-              <p>Al Karam</p>
-            </div>
-            <div class="product-rating">
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-            </div>
-          </div>
-          <p class="product-description">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            Consequuntur commodi architecto a neque saepe dolor accusamus
-            suscipit reprehenderit culpa dolorum odit eaque, animi repudiandae
-            laboriosam atque asperiores? Unde, omnis debitis!
-          </p>
-          <div class="product-price">
-            <p class="product-discount-price">Rp200.000</p>
-            <p class="product-normal-price">Rp400.000</p>
-          </div>
-          <a href="#" class="product-add-to-cart">
-            <i class="ph ph-shopping-cart"></i> Tambah Keranjang
-          </a>
-        </div>
-        <div class="product-card">
-          <img src="assets/images/promo_2.png" alt="" class="product-image" />
-          <div class="product-title">
-            <div class="product-name">
-              <p>Long Dress</p>
-              <p>Al Karam</p>
-            </div>
-            <div class="product-rating">
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-            </div>
-          </div>
-          <p class="product-description">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            Consequuntur commodi architecto a neque saepe dolor accusamus
-            suscipit reprehenderit culpa dolorum odit eaque, animi repudiandae
-            laboriosam atque asperiores? Unde, omnis debitis!
-          </p>
-          <div class="product-price">
-            <p class="product-discount-price">Rp200.000</p>
-            <p class="product-normal-price">Rp400.000</p>
-          </div>
-          <a href="#" class="product-add-to-cart">
-            <i class="ph ph-shopping-cart"></i> Tambah Keranjang
-          </a>
-        </div>
-        <div class="product-card">
-          <img src="assets/images/promo_3.png" alt="" class="product-image" />
-          <div class="product-title">
-            <div class="product-name">
-              <p>Full Sweater</p>
-              <p>Al Karam</p>
-            </div>
-            <div class="product-rating">
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-              <i class="ph-fill ph-star"></i>
-            </div>
-          </div>
-          <p class="product-description">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            Consequuntur commodi architecto a neque saepe dolor accusamus
-            suscipit reprehenderit culpa dolorum odit eaque, animi repudiandae
-            laboriosam atque asperiores? Unde, omnis debitis!
-          </p>
-          <div class="product-price">
-            <p class="product-discount-price">Rp200.000</p>
-            <p class="product-normal-price">Rp400.000</p>
-          </div>
-          <a href="#" class="product-add-to-cart">
-            <i class="ph ph-shopping-cart"></i> Tambah Keranjang
-          </a>
-        </div>
+        <?php endwhile; ?>
       </div>
-
-      <a href="" class="view-more-btn">Lihat Selengkapnya</a>
     </section>
   </main>
 

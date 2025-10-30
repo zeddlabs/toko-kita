@@ -1,7 +1,7 @@
 <?php
 include '../template/header.php';
 
-$query = "SELECT *, kategori.nama AS nama_kategori FROM produk INNER JOIN kategori ON produk.kategori_id = kategori.id";
+$query = "SELECT produk.*, kategori.nama AS nama_kategori FROM produk INNER JOIN kategori ON produk.kategori_id = kategori.id";
 $result = mysqli_query($conn, $query);
 
 ?>
@@ -57,7 +57,9 @@ $result = mysqli_query($conn, $query);
                         <td><?= $row['merk']; ?></td>
                         <td><?= $row['nama_kategori']; ?></td>
                         <td>
-                          <?= ($row['harga_diskon'] == 0) ? 'Rp' . number_format($row['harga_normal'], 0, ',', '.') : 'Rp' . number_format($row['harga_diskon'], 0, ',', '.'); ?>
+                          Harga Normal : <?= 'Rp' . number_format($row['harga_normal'], 0, ',', '.') ?>
+                          <br>
+                          <?= (!empty($row['harga_diskon'])) ? 'Harga Diskon : ' . 'Rp' . number_format($row['harga_diskon'], 0, ',', '.') : '' ?>
                         </td>
                         <td><?= $row['rating']; ?></td>
 

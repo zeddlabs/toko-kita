@@ -19,16 +19,20 @@ CREATE TABLE IF NOT EXISTS `kategori` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nama` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table toko_kita.kategori: ~0 rows (approximately)
+-- Dumping data for table toko_kita.kategori: ~2 rows (approximately)
 DELETE FROM `kategori`;
+INSERT INTO `kategori` (`id`, `nama`) VALUES
+	(2, 'Celana Wanita'),
+	(3, 'Baju Pria');
 
 -- Dumping structure for table toko_kita.keranjang
 CREATE TABLE IF NOT EXISTS `keranjang` (
   `id` int NOT NULL AUTO_INCREMENT,
   `pelanggan_id` int NOT NULL,
   `produk_id` int NOT NULL,
+  `jumlah` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `keranjang_pelanggan` (`pelanggan_id`),
   KEY `keranjang_produk` (`produk_id`),
@@ -49,12 +53,12 @@ CREATE TABLE IF NOT EXISTS `pelanggan` (
   PRIMARY KEY (`id`),
   KEY `pelanggan_users` (`user_id`),
   CONSTRAINT `pelanggan_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table toko_kita.pelanggan: ~1 rows (approximately)
 DELETE FROM `pelanggan`;
 INSERT INTO `pelanggan` (`id`, `nama`, `alamat`, `no_hp`, `user_id`) VALUES
-	(1, 'Jon Do', 'Jl. jalan', '081234567890', 1);
+	(1, 'Jon Do berubah', 'Jl. jalan', '081234567890', 1);
 
 -- Dumping structure for table toko_kita.produk
 CREATE TABLE IF NOT EXISTS `produk` (
@@ -69,25 +73,48 @@ CREATE TABLE IF NOT EXISTS `produk` (
   PRIMARY KEY (`id`),
   KEY `kategori_id` (`kategori_id`),
   CONSTRAINT `kategori_id` FOREIGN KEY (`kategori_id`) REFERENCES `kategori` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Dumping data for table toko_kita.produk: ~4 rows (approximately)
+DELETE FROM `produk`;
+INSERT INTO `produk` (`id`, `nama`, `merk`, `harga_normal`, `harga_diskon`, `rating`, `gambar`, `kategori_id`) VALUES
+	(2, 'Baju Batik Pria bagus', 'Apaya', 500000, 0, 5, '68efaff898068_1760538616.jpg', 3),
+	(3, 'Quis expedita nemo t', 'Sint culpa molestia', 97000, 63000, 5, '6903655f0d10b_1761830239.jpg', 3),
+	(4, 'Suscipit quo et mole', 'Quam expedita non et', 66000, 7200, 4, '6903666c82640_1761830508.jpg', 3),
+	(5, 'Aliquid deserunt con', 'Totam enim ut labore', 100000, 68000, 4, '6903668328e25_1761830531.jpg', 3);
+
+-- Dumping structure for table toko_kita.transaksi
+CREATE TABLE IF NOT EXISTS `transaksi` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `keranjang_id` int NOT NULL DEFAULT '0',
+  `total_harga` int NOT NULL DEFAULT '0',
+  `alamat_pengiriman` text NOT NULL,
+  `status_pembayaran` enum('lunas','belum lunas') NOT NULL DEFAULT 'belum lunas',
+  `status_pengiriman` enum('dikemas','dikirim','diterima') NOT NULL DEFAULT 'dikemas',
+  PRIMARY KEY (`id`),
+  KEY `keranjang_id` (`keranjang_id`),
+  CONSTRAINT `transaksi_keranjang` FOREIGN KEY (`keranjang_id`) REFERENCES `keranjang` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table toko_kita.produk: ~0 rows (approximately)
-DELETE FROM `produk`;
+-- Dumping data for table toko_kita.transaksi: ~0 rows (approximately)
+DELETE FROM `transaksi`;
 
 -- Dumping structure for table toko_kita.users
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int NOT NULL AUTO_INCREMENT,
+  `nama` varchar(255) NOT NULL,
   `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `password` varchar(255) NOT NULL,
   `role` enum('admin','pelanggan') NOT NULL DEFAULT 'pelanggan',
   `foto` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table toko_kita.users: ~1 rows (approximately)
+-- Dumping data for table toko_kita.users: ~2 rows (approximately)
 DELETE FROM `users`;
-INSERT INTO `users` (`id`, `email`, `password`, `role`, `foto`) VALUES
-	(1, 'jondo@gmail.com', '$2y$10$Wlg/n6K1wrxeXTOMZi/R8.8WomOcbtwsuRBE/j6PEEDhkowGRqH4m', 'pelanggan', NULL);
+INSERT INTO `users` (`id`, `nama`, `email`, `password`, `role`, `foto`) VALUES
+	(1, 'Jon Do berubah', 'jondo@gmail.com', '', 'pelanggan', '68f24bd3899c1_1760709587.png'),
+	(2, 'Admin', 'admin@gmail.com', '$2y$10$WB/9fvu0LzjXsBZaQdWI9u.xCCkSW4bLIgP7AjyOBNlKvEj.5XKqC', 'admin', NULL);
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
