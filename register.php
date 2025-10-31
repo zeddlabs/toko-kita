@@ -15,7 +15,7 @@ if (isset($_POST['daftar'])) {
   $no_hp = mysqli_real_escape_string($conn, $_POST['no_hp']);
   $password = password_hash(password: $_POST['password'], algo: PASSWORD_DEFAULT);
 
-  $query = "INSERT INTO users (email, password) VALUES ('$email', '$password')";
+  $query = "INSERT INTO users (nama, email, password) VALUES ('$nama', '$email', '$password')";
 
   $result = mysqli_query($conn, $query);
 

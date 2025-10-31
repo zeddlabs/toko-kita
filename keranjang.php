@@ -3,11 +3,8 @@ session_start();
 
 require 'config/koneksi.php';
 
-$query = "SELECT produk.*, kategori.nama AS nama_kategori FROM produk INNER JOIN kategori ON produk.kategori_id = kategori.id ORDER BY produk.id DESC";
+$query = "SELECT keranjang.*, produk.gambar AS gambar_produk, produk.nama AS nama_produk, produk.harga_normal AS harga_normal_produk, produk.harga_diskon AS harga_diskon_produk FROM keranjang INNER JOIN produk ON keranjang.produk_id = produk.id WHERE keranjang.pelanggan_id = {$_SESSION['pelanggan_id']}";
 $result = mysqli_query($conn, $query);
-
-$query_promo = "SELECT produk.*, kategori.nama AS nama_kategori FROM produk INNER JOIN kategori ON produk.kategori_id = kategori.id WHERE produk.harga_diskon > 0 ORDER BY produk.id DESC";
-$result_promo = mysqli_query($conn, $query_promo);
 
 ?>
 
@@ -42,16 +39,14 @@ $result_promo = mysqli_query($conn, $query_promo);
       <a href="/#promo" class="nav-item">Promo</a>
       <a href="/#products" class="nav-item">Produk</a>
 
-      <?php
-
-      if (isset($_SESSION['login'])) {
-        echo '<a href="/logout.php" class="nav-item">Logout</a>';
-      } else {
-        echo '<a href="/login.php" class="nav-item">Masuk</a>
-              <a href="" class="nav-item signup-btn">Daftar</a>';
-      }
-
-      ?>
+      <?php if (isset($_SESSION['login'])): ?>
+        <span class="nav-item">|</span>
+        <a href="/keranjang.php" class="nav-item">Keranjang</a>
+        <a href="/logout.php" class="nav-item">Logout</a>
+      <?php else: ?>
+        <a href="/login.php" class="nav-item">Masuk</a>
+        <a href="" class="nav-item signup-btn">Daftar</a>
+      <?php endif; ?>
 
       <button type="button" class="close-btn">
         <i class="ph ph-x"></i>
@@ -67,10 +62,7 @@ $result_promo = mysqli_query($conn, $query_promo);
     <section class="cart" id="cart">
       <h1 class="cart-title">Keranjang</h1>
       <p class="cart-text">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi
-        distinctio libero corporis fugit molestiae totam unde voluptas
-        accusantium nemo tenetur amet, quod deleniti magnam placeat provident
-        est ducimus laudantium illo.
+        Lorem ipsum dolor sit amet consectetur adipisicing elit.
       </p>
 
       <div class="cart-content">
@@ -84,17 +76,28 @@ $result_promo = mysqli_query($conn, $query_promo);
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>
-                <div class="cart-item-name">
-                  <img src="assets/images/promo_1.png" alt="" />
-                  <p>Lorem ipsum dolor sit amet</p>
-                </div>
-              </td>
-              <td>Rp100.000</td>
-              <td>1</td>
-              <td>Rp100.000</td>
-            </tr>
+            <?php $subtotal = 0; ?>
+            <?php while ($row = mysqli_fetch_assoc($result)): ?>
+              <?php $subtotal += $row['harga_diskon_produk'] > 0 ? $row['harga_diskon_produk'] * $row['jumlah'] : $row['harga_normal_produk'] * $row['jumlah']; ?>
+              <tr>
+                <td>
+                  <div class="cart-item-name">
+                    <img src="uploads/<?= $row['gambar_produk']; ?>" alt="" />
+                    <p><?= $row['nama_produk']; ?></p>
+                  </div>
+                </td>
+                <td>
+                  <?= $row['harga_diskon_produk'] > 0 ? 'Rp' . number_format($row['harga_diskon_produk'], 0, ',', '.') : 'Rp' . number_format($row['harga_normal_produk'], 0, ',', '.'); ?>
+                </td>
+                <td><?= $row['jumlah']; ?></td>
+                <td>
+                  <?php
+                  $total = $row['harga_diskon_produk'] > 0 ? $row['harga_diskon_produk'] * $row['jumlah'] : $row['harga_normal_produk'] * $row['jumlah'];
+                  echo 'Rp' . number_format($total, 0, ',', '.');
+                  ?>
+                </td>
+              </tr>
+            <?php endwhile; ?>
           </tbody>
         </table>
 
@@ -103,7 +106,9 @@ $result_promo = mysqli_query($conn, $query_promo);
           <div class="cart-checkout-content">
             <div class="cart-checkout-total">
               <p>Subtotal</p>
-              <p>Rp100.000</p>
+              <p>
+                <?= 'Rp' . number_format($subtotal, 0, ',', '.'); ?>
+              </p>
             </div>
             <form action="" method="post">
               <input type="hidden" value="id dari keranjang">

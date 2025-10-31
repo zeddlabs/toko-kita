@@ -9,6 +9,24 @@ $result = mysqli_query($conn, $query);
 $query_promo = "SELECT produk.*, kategori.nama AS nama_kategori FROM produk INNER JOIN kategori ON produk.kategori_id = kategori.id WHERE produk.harga_diskon > 0 ORDER BY produk.id DESC";
 $result_promo = mysqli_query($conn, $query_promo);
 
+// fitur tambah keranjang
+if (isset($_POST['add_to_cart'])) {
+  $id_produk = $_POST['id_produk'];
+
+  $query_keranjang = "SELECT * FROM keranjang WHERE produk_id = $id_produk AND pelanggan_id = {$_SESSION['pelanggan_id']}";
+  $result_keranjang = mysqli_query($conn, $query_keranjang);
+
+  if (mysqli_num_rows($result_keranjang) == 0) {
+    $query = "INSERT INTO keranjang (pelanggan_id, produk_id, jumlah) VALUES ({$_SESSION['pelanggan_id']}, $id_produk, 1)";
+    $result = mysqli_query($conn, $query);
+  } else {
+    $row_keranjang = mysqli_fetch_assoc($result_keranjang);
+    $jumlah = $row_keranjang['jumlah'] + 1;
+
+    $query = "UPDATE keranjang SET jumlah = $jumlah WHERE produk_id = $id_produk AND pelanggan_id = {$_SESSION['pelanggan_id']}";
+    $result = mysqli_query($conn, $query);
+  }
+}
 ?>
 
 <!DOCTYPE html>
@@ -42,16 +60,14 @@ $result_promo = mysqli_query($conn, $query_promo);
       <a href="#promo" class="nav-item">Promo</a>
       <a href="#products" class="nav-item">Produk</a>
 
-      <?php
-
-      if (isset($_SESSION['login'])) {
-        echo '<a href="/logout.php" class="nav-item">Logout</a>';
-      } else {
-        echo '<a href="/login.php" class="nav-item">Masuk</a>
-              <a href="" class="nav-item signup-btn">Daftar</a>';
-      }
-
-      ?>
+      <?php if (isset($_SESSION['login'])): ?>
+        <span class="nav-item">|</span>
+        <a href="/keranjang.php" class="nav-item">Keranjang</a>
+        <a href="/logout.php" class="nav-item">Logout</a>
+      <?php else: ?>
+        <a href="/login.php" class="nav-item">Masuk</a>
+        <a href="" class="nav-item signup-btn">Daftar</a>
+      <?php endif; ?>
 
       <button type="button" class="close-btn">
         <i class="ph ph-x"></i>
@@ -125,9 +141,12 @@ $result_promo = mysqli_query($conn, $query_promo);
               <p class="product-discount-price"><?= 'Rp' . number_format($row['harga_diskon'], 0, ',', '.'); ?></p>
               <p class="product-normal-price"><?= 'Rp' . number_format($row['harga_normal'], 0, ',', '.'); ?></p>
             </div>
-            <a href="#" class="product-add-to-cart">
-              <i class="ph ph-shopping-cart"></i> Tambah Keranjang
-            </a>
+            <form action="" method="post">
+              <input type="hidden" value="<?= $row['id']; ?>" name="id_produk">
+              <button type="submit" name="add_to_cart" class="product-add-to-cart">
+                <i class="ph ph-shopping-cart"></i> Tambah Keranjang
+              </button>
+            </form>
           </div>
         <?php endwhile; ?>
       </div>
@@ -173,9 +192,13 @@ $result_promo = mysqli_query($conn, $query_promo);
                 <p class="product-discount-price"><?= 'Rp' . number_format($row['harga_normal'], 0, ',', '.'); ?></p>
               <?php endif; ?>
             </div>
-            <a href="#" class="product-add-to-cart">
-              <i class="ph ph-shopping-cart"></i> Tambah Keranjang
-            </a>
+
+            <form action="" method="post">
+              <input type="hidden" value="<?= $row['id']; ?>" name="id_produk">
+              <button type="submit" name="add_to_cart" class="product-add-to-cart">
+                <i class="ph ph-shopping-cart"></i> Tambah Keranjang
+              </button>
+            </form>
           </div>
         <?php endwhile; ?>
       </div>

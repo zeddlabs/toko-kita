@@ -28,6 +28,12 @@ if (isset($_POST['masuk'])) {
       if ($row['role'] == 'admin') {
         header('Location: admin/index.php');
       } else {
+        $query_pelanggan = "SELECT * FROM pelanggan WHERE user_id = $row[id]";
+        $result_pelanggan = mysqli_query($conn, $query_pelanggan);
+        $pelanggan = mysqli_fetch_assoc($result_pelanggan);
+
+        $_SESSION['pelanggan_id'] = $pelanggan['id'];
+
         header('Location: index.php');
       }
 
